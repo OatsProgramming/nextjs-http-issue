@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
-  username            String
+  name                String
   image               String?
   email               String @unique
   emailVerified       DateTime?
@@ -63,13 +63,11 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Movie {
+model Item {
   id                  String @id @default(auto()) @map("_id") @db.ObjectId
   title               String
   description         String
-  videoUrl            String
-  thumbnailUrl        String
-  genre               String
-  duration            String
+  imageUrl            String
+  price               String
 }
 
