@@ -24,6 +24,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# For now ignore env file ( Change later )
+.env
+
 # local env files
 .env*.local
 
