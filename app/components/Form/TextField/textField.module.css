@@ -12,6 +12,9 @@
     position: absolute;
     left: 1rem;
     top: 1rem;
+    -webkit-transition: all 200ms ease;
+    -o-transition: all 200ms ease;
+    transition: all 200ms ease;
 }
 
 .container > input:focus + label,
