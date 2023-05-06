@@ -5,7 +5,10 @@ import { signOut } from 'next-auth/react'
 
 export function SignIn() {
     return (
-        <button onPointerDown={() => signIn()}>
+        <button onPointerDown={() => signIn()
+            .then(res => console.log(res))
+            .catch(err => console.error(err))
+        }>
             Sign in
         </button>
     )

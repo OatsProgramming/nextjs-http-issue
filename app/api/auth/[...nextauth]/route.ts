@@ -5,6 +5,7 @@ import Credentials from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import prismadb from '@/lib/prismadb'
 import NextAuth from 'next-auth/next'
+import { compare } from 'bcrypt'
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -20,10 +21,10 @@ export const authOptions: NextAuthOptions = {
             name: 'Credentials',
             credentials: {
                 name: {
-                    name: 'name',
-                    label: 'name',
+                    name: 'username',
+                    label: 'Username',
                     type: 'text',
-                    placeholder: 'Jack O.'
+                    placeholder: 'OatsProgramming'
                 },
                 email: {
                     name: 'email',
@@ -38,7 +39,36 @@ export const authOptions: NextAuthOptions = {
                 }
             },
             authorize: async (credentials) => {
-                return null
+                // Check for any missing properties that would affect query
+                if ((!credentials?.name && !credentials?.email) || !credentials?.password) {
+                    console.log(credentials)
+                    return null
+                }
+
+                try {
+                    // Get user from database
+                    const user = await prismadb.user.findFirst({
+                        where: {
+                            OR: [
+                                { email: credentials.email },
+                                { name: credentials.name }
+                            ]
+                        }
+                    })
+
+                    // See if 404 or password mismatch
+                    if (!user) return null
+                    else if (!await compare(credentials.password, user.hashedPassword)) return null
+
+                    return {
+                        ...user,
+                        name: user.name
+                    }
+
+                } catch (err) {
+                    console.error(err)
+                    return null
+                }
             }
         })
     ],
@@ -62,7 +92,21 @@ export const authOptions: NextAuthOptions = {
             }
             return token
         }
-    }
+    },
+    cookies: {
+        pkceCodeVerifier: {
+          name: "next-auth.pkce.code_verifier",
+          options: {
+            httpOnly: true,
+            sameSite: "none",
+            path: "/",
+            secure: true,
+          },
+        },
+      },
+    // pages: {
+    //     signIn: '/'
+    // }
 }
 
 const handler = NextAuth(authOptions)
