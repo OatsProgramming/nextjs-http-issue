@@ -11,7 +11,7 @@ export default async function Home() {
       <pre>{JSON.stringify(session)}</pre>
       <SignIn />
       <SignOut />
-      <Form method="PATCH"/>
+      <Form method="DELETE"/>
     </main>
   )
 }
